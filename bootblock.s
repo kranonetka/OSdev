@@ -3,7 +3,7 @@ org 0x7c00
 
 	;Инициализация сегментных регистров
 	jmp 0x0:($+5)	;Инициализация регистра cs
-	xor ax,ax	
+	xor ax, ax	
 	mov ds, ax
 	mov es, ax
 	mov fs, ax
@@ -11,7 +11,7 @@ org 0x7c00
 	mov ss, ax
 
 start_with_ints:
-	mov ax, 0x0003
+	mov ax, 0x0007
 	int 0x10	;change video mode
 
 	mov ah, 0x0b
@@ -28,12 +28,12 @@ start_with_ints:
 ;start_without_ints:
 ;	;video memory at 0xb8000
 ;	mov ax, 0xb800
-;	mov gs, ax
+;	mov es, ax
 ;
 ;	mov cx, 25*80
 ;	xor bx, bx
 ;.clear_screen:
-;	mov word [gs:bx], 0x1e20
+;	mov word [bx], 0x1e20
 ;	times 2 inc bx
 ;	loop .clear_screen
 ;
@@ -44,24 +44,46 @@ start_with_ints:
 ;	lodsb
 ;	test al, al
 ;	jz .end_message
-;	mov [gs:bx], ax
+;	mov [bx], ax
 ;	times 2 inc bx
 ;	jmp .print_message
 ;.end_message:
 
- read_seitors:
-	mov bx, 0x0050
+ read_sectors:
+	mov bx, 0x07e0
 	mov es, bx
 	mov ax, 0x0204	;read 4 sectors
-	mov cx, 0x0002	;track 0, sector 2
+	mov cx, 0x0002	;cylinder 0, sector 2
 	mov dx, 0x0080	;head 0, dl = 80 - disk on ch0
 	xor bx, bx
 	int 0x13
-	
-	
-	
 
-;TODO: READ SECTORS TO 0x00000500
+	mov ax, 0x1301
+	mov bx, 0x001e
+	mov cx, 80
+	mov dx, 0x0100
+	xor bp, bp
+	int 0x10
+	
+	mov ax, 0x1301
+	inc dh
+	add bp,512
+	int 0x10
+
+	mov ax,0x1301
+	inc dh
+	add bp,512
+	int 0x10
+	
+	mov ax,0x1301
+	inc dh
+	add bp,512
+	int 0x10
+
+	mov ax,0x1301
+	inc dh
+	add bp,512
+	int 0x10
 
 jmp $
 
