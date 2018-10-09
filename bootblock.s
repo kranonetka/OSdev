@@ -11,7 +11,7 @@ org 0x7c00
 	mov ss, ax
 
 start_with_ints:
-	mov ax, 0x0007
+	mov ax, 0x0003
 	int 0x10	;change video mode
 
 	mov ah, 0x0b
@@ -55,35 +55,16 @@ start_with_ints:
 	mov ax, 0x0204	;read 4 sectors
 	mov cx, 0x0002	;cylinder 0, sector 2
 	mov dx, 0x0080	;head 0, dl = 80 - disk on ch0
-	xor bx, bx
+	xor bx, bx	;read to 0x07e00
 	int 0x13
 
-	mov ax, 0x1301
-	mov bx, 0x001e
-	mov cx, 80
-	mov dx, 0x0100
-	xor bp, bp
-	int 0x10
-	
-	mov ax, 0x1301
-	inc dh
-	add bp,512
-	int 0x10
+;Отключить прерывания (cli)
+;Включить A20 line(включена по умолчанию в боксе)
+;Рагрузить размер и линейный адрес GDT в GDTR (lgdt [gdtr_struc_adress]
+	;первые 2 байта - лимит, следющие 4 - адрес gdt
+;Выставить бит PE в CR0
+;Инициализировать сегментные регистры
 
-	mov ax,0x1301
-	inc dh
-	add bp,512
-	int 0x10
-	
-	mov ax,0x1301
-	inc dh
-	add bp,512
-	int 0x10
-
-	mov ax,0x1301
-	inc dh
-	add bp,512
-	int 0x10
 
 jmp $
 
