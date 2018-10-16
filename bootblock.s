@@ -44,15 +44,15 @@ start_with_ints:
 ;	lodsb
 ;	test al, al
 ;	jz .end_message
-;	mov [bx], ax
-;	times 2 inc bx
+;	mov [bx*2], ax
+;	inc bx
 ;	jmp .print_message
 ;.end_message:
 
  read_sectors:
 	mov bx, 0x07e0
 	mov es, bx
-	mov ax, 0x0204	;read 4 sectors
+	mov ax, 0x0201	;read 1 sector
 	mov cx, 0x0002	;cylinder 0, sector 2
 	mov dx, 0x0080	;head 0, dl = 80 - disk on ch0
 	xor bx, bx	;read to 0x07e00
