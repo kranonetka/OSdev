@@ -15,12 +15,18 @@ start:
 ;init segment regs
 	mov ax, 0x10
 	mov ds, ax
-	mov ss, ax
 	mov es, ax
 	mov fs, ax
 	mov ax, 0x18
 	mov gs, ax
-	mov esp, 0x10000
+	mov ax, 0x20
+	mov ss, ax
+	mov esp, 0xfffffff0
+
+;	push byte 'J'
+;
+;	mov al,[esp]
+;	mov byte [gs:0],al
 
 	mov ebx, 80 * 1
 	mov ah, 0x4a
@@ -36,12 +42,11 @@ start:
 	jmp $	
 
 gdt_start:
-;null segment:
+;null descriptor:
 	dd 0, 0
-;code segment:
-	dw 0xffff	;limit 0-15
-	dw 0	;base 0-15
-	db 0	;base 16-23
+;code segment descriptor:
+	db 0xff, 0xff	;limit 0-15
+	db 0x00, 0x00, 0x00	;base 0-23
 	db 10011010b	;access byte
 			;7: 1 - valid sector
 			;6-5: privelege (0 - kernel)
@@ -55,10 +60,9 @@ gdt_start:
 			;1 - 32 bit
 	db 0	;base 24-31
 		;base 0x0
-;data segment:	
-	dw 0xffff	;limit 0-15
-	dw 0	;base 0-15
-	db 0	;base 16-23
+;data segment descriptor:	
+	db 0xff, 0xff	;limit 0-15
+	db 0x00, 0x00, 0x00	;base 0-23
 	db 10010010b	;access byte
 			;7: 1 - valid sector
 			;6-5: privelege (0 - kernel)
@@ -72,16 +76,23 @@ gdt_start:
 			;1 - 32 bit protected
 	db 0	;base 24-31
 		;base 0x0
-;video segment:
-	dw 0xffff	;limit 0-15
-	db 0x0, 0x80, 0x0b	;base 0-23
+;video segment descriptor:
+	db 0xff, 0xff	;limit 0-15
+	db 0x00, 0x80, 0x0b	;base 0-23
 	db 10010010b	;access byte
 	db 10001111b	;flags+ limit 16-19
 			;granularity - 1
 			;0 - 16 bit
 	db 0	;base 24-31
 		;base 0x000b8000
-		
+;stack segment descriptor:
+	db 0xe1, 0xff	;limit 0-15
+	db 0x00, 0xf0, 0x09	;base 0-23
+	db 10010110b	;access byte (2: 1 - segment grows down)
+	db 11001111b
+	db 0x00	;base 24-31
+		;base 0x0009f000
+
 gdt_info:
 	dw gdt_info - gdt_start - 1
 	dd gdt_start

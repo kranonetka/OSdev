@@ -10,44 +10,46 @@ org 0x7c00
 	mov gs, ax
 	mov ss, ax
 
-start_with_ints:
-	mov ax, 0x0003
-	int 0x10	;change video mode
-
-	mov ah, 0x0b
-	mov bx, 0x0001
-	int 0x10	;change background
-
-	mov ax, 0x1301
-	mov bx, 0x001e
-	mov cx, msg_len
-	xor dx, dx
-	mov bp, msg
-	int 0x10	;print string
-
-;start_without_ints:
-;	;video memory at 0xb8000
-;	mov ax, 0xb800
-;	mov es, ax
+;start_with_ints:
+;	mov ax, 0x0003
+;	int 0x10	;change video mode
 ;
-;	mov cx, 25*80
-;	xor bx, bx
-;.clear_screen:
-;	mov word [bx], 0x1e20
-;	times 2 inc bx
-;	loop .clear_screen
+;	mov ah, 0x0b
+;	mov bx, 0x0001
+;	int 0x10	;change background
 ;
-;	mov si, msg
-;	mov bx, 160 * 10 + 80 - 14
-;	mov ah, 0x1e
-;.print_message:
-;	lodsb
-;	test al, al
-;	jz .end_message
-;	mov [bx*2], ax
-;	inc bx
-;	jmp .print_message
-;.end_message:
+;	mov ax, 0x1301
+;	mov bx, 0x001e
+;	mov cx, msg_len
+;	xor dx, dx
+;	mov bp, msg
+;	int 0x10	;print string
+
+start_without_ints:
+	;video memory at 0xb8000
+	mov ax, 0xb800
+	mov gs, ax
+
+	mov cx, 25*80
+	xor bx, bx
+.clear_screen:
+	mov word [gs:bx], 0x1e20
+	times 2 inc bx
+	loop .clear_screen
+
+	mov si, msg
+	xor bx, bx
+	mov ah, 0x1e
+.print_message:
+	lodsb
+	test al, al
+	jz .end_message
+	mov [gs:bx], ax
+	times 2 inc bx
+	jmp .print_message
+.end_message:
+	xor ax,ax
+	mov gs,ax
 
  read_sectors:
 	mov bx, 0x07e0

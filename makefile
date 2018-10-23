@@ -1,5 +1,4 @@
 build: clear bootblock.s
-	rm -f disk.img
 	dd if=/dev/zero of=disk.img bs=1M count=1
 	nasm -fbin bootblock.s -o bootblock.bin
 	nasm -fbin procmode.s -o procmode.bin
