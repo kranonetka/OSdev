@@ -28,51 +28,41 @@ org 0x7c00
 start_without_ints:
 	;video memory at 0xb8000
 	mov ax, 0xb800
-	mov gs, ax
+	mov ds, ax
 
 	mov cx, 25*80
 	xor bx, bx
 .clear_screen:
-	mov word [gs:bx], 0x1e20
+	mov word [bx], 0x1e20
 	times 2 inc bx
 	loop .clear_screen
 
 	mov si, msg
+	mov bx, 0xb800
+	mov gs, bx
 	xor bx, bx
+	mov ds, bx
 	mov ah, 0x1e
 .print_message:
 	lodsb
 	test al, al
-	jz .end_message
+	jz .read_sectors
 	mov [gs:bx], ax
 	times 2 inc bx
 	jmp .print_message
-.end_message:
-	xor ax,ax
-	mov gs,ax
-
- read_sectors:
+.read_sectors:
 	mov bx, 0x07e0
 	mov es, bx
+	xor bx, bx
 	mov ax, 0x0201	;read 1 sector
 	mov cx, 0x0002	;cylinder 0, sector 2
 	mov dx, 0x0080	;head 0, dl = 80 - disk on ch0
-	xor bx, bx	;read to 0x07e00
-	int 0x13
-
-;Отключить прерывания (cli)
-;Включить A20 line(включена по умолчанию в боксе)
-;Рагрузить размер и линейный адрес GDT в GDTR (lgdt [gdtr_struc_adress]
-	;первые 2 байта - лимит, следющие 4 - адрес gdt
-;Выставить бит PE в CR0
-;Инициализировать сегментные регистры
-
-;jmp $
+	int 0x13	;read to 0x07e00
 
 jmp 0x7e00	;Переход в защищенный режим
 
-data:
-	msg: db "Hello, world!", 0
-	msg_len: equ $ - msg - 1
+msg: db "Hello, world!", 0
+msg_len: equ $ - msg - 1
+
 times 510 - ($ - $$) db 0
 db 0x55, 0xaa

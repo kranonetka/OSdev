@@ -23,12 +23,7 @@ start:
 	mov ss, ax
 	mov esp, 0xfffffff0
 
-;	push byte 'J'
-;
-;	mov al,[esp]
-;	mov byte [gs:0],al
-
-	mov ebx, 80 * 1
+	mov ebx, 80 * 24 + 60
 	mov ah, 0x4a
 	mov esi, msg
 .put_msg:
@@ -77,11 +72,11 @@ gdt_start:
 	db 0	;base 24-31
 		;base 0x0
 ;video segment descriptor:
-	db 0xff, 0xff	;limit 0-15
+	db 0xa0, 0x0f	;limit 0-15
 	db 0x00, 0x80, 0x0b	;base 0-23
 	db 10010010b	;access byte
-	db 10001111b	;flags+ limit 16-19
-			;granularity - 1
+	db 00000000b	;flags+ limit 16-19
+			;granularity - 0
 			;0 - 16 bit
 	db 0	;base 24-31
 		;base 0x000b8000
@@ -89,9 +84,10 @@ gdt_start:
 	db 0xe1, 0xff	;limit 0-15
 	db 0x00, 0xf0, 0x09	;base 0-23
 	db 10010110b	;access byte (2: 1 - segment grows down)
-	db 11001111b
+	db 01001111b	;granularity - 0
 	db 0x00	;base 24-31
 		;base 0x0009f000
+		;limit 0xffffe1
 
 gdt_info:
 	dw gdt_info - gdt_start - 1
