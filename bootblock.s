@@ -3,7 +3,7 @@ org 0x7c00
 
 	;Инициализация сегментных регистров
 	jmp 0x0:($+5)	;Инициализация регистра cs
-	xor ax, ax	
+	xor ax, ax
 	mov ds, ax
 	mov es, ax
 	mov fs, ax
@@ -34,7 +34,7 @@ start_without_ints:
 	xor bx, bx
 .clear_screen:
 	mov word [bx], 0x1e20
-	times 2 inc bx
+	db 0x43, 0x43
 	loop .clear_screen
 
 	mov si, msg
@@ -48,7 +48,7 @@ start_without_ints:
 	test al, al
 	jz .read_sectors
 	mov [gs:bx], ax
-	times 2 inc bx
+	db 0x43, 0x43
 	jmp .print_message
 .read_sectors:
 	mov bx, 0x07e0

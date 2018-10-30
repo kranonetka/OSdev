@@ -23,7 +23,7 @@ start:
 	mov ss, ax
 	mov esp, 0xfffffff0
 
-	mov ebx, 80 * 24 + 60
+	mov ebx, 80
 	mov ah, 0x4a
 	mov esi, msg
 .put_msg:
@@ -55,7 +55,7 @@ gdt_start:
 			;1 - 32 bit
 	db 0	;base 24-31
 		;base 0x0
-;data segment descriptor:	
+;data segment descriptor:
 	db 0xff, 0xff	;limit 0-15
 	db 0x00, 0x00, 0x00	;base 0-23
 	db 10010010b	;access byte
