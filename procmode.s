@@ -4,9 +4,9 @@ org 0x7e00
 
 cli
 lgdt [gdt_info]
-mov eax,cr0
-or al,1
-mov cr0,eax
+mov eax, cr0
+or al, 1
+mov cr0, eax
 
 jmp 0x08:($+5) ;init cs register
 
@@ -80,6 +80,7 @@ gdt_start:
 			;0 - 16 bit
 	db 0	;base 24-31
 		;base 0x000b8000
+		;limit 0xfa0 (80*25*2)
 ;stack segment descriptor:
 	db 0xe1, 0xff	;limit 0-15
 	db 0x00, 0xf0, 0x09	;base 0-23
