@@ -8,5 +8,5 @@ build: clear bootblock.s
 clear:
 	rm -f bootblock.bin procmode.bin disk.img
 
-run: build disk.img bochs.config
+run: build bochs.config
 	echo c | bochs -qf bochs.config
