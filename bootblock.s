@@ -54,7 +54,7 @@ start_without_ints:
 	mov bx, 0x07e0
 	mov es, bx
 	xor bx, bx
-	mov ax, 0x0201	;read 1 sector
+	mov ax, 0x0210	;read 16 sectors
 	mov cx, 0x0002	;cylinder 0, sector 2
 	mov dx, 0x0080	;head 0, dl = 80 - disk on ch0
 	int 0x13	;read to 0x07e00
