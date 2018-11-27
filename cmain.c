@@ -1,4 +1,3 @@
-
 #define VIDEO_MEM ((char *)0xb8000)
 
 const char hello[] = "Hello, C world!";
@@ -31,4 +30,7 @@ int cmain()
 	{
 		video[i*2] = hello[i];
 	}
+
+	while (1) {};
+	return 0;
 }

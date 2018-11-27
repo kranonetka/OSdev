@@ -1,12 +1,25 @@
-build: clear bootblock.s
-	dd if=/dev/zero of=disk.img bs=1M count=1
-	nasm -fbin bootblock.s -o bootblock.bin
-	nasm -fbin procmode.s -o procmode.bin
-	dd if=bootblock.bin of=disk.img bs=512 count=1 conv=notrunc
-	dd if=procmode.bin of=disk.img bs=512 count=1 seek=1 conv=notrunc
-	
+
+CFLAGS=-m32 -fno-pie -nostdlib -nodefaultlibs -nostartfiles -fno-builtin -Wno-int-to-pointer-cast -march=i386
+
 clear:
-	rm -f bootblock.bin procmode.bin disk.img
+	rm -f bootblock.bin disk.img cmain.o procmode.o kernel
+
+build: clear kernel
+	dd if=/dev/zero of=disk.img bs=1M count=1
+	dd if=bootblock.bin of=disk.img bs=512 count=1 conv=notrunc
+	dd if=kernel of=disk.img bs=512 count='cat kern_size' seek=1 conv=notrunc
+
+kernel: cmain.o start.o
+	ld -T linker.ld -o $@ $^
 
 run: build bochs.config
 	echo c | bochs -qf bochs.config
+
+bootblock.bin: bootblock.s
+	nasm -fbin $^ -o $@
+
+start.o: start.s
+	nasm -felf $^ -o $@
+
+cmain.o: cmain.c
+	gcc $(CFLAGS) -o $@ $^
