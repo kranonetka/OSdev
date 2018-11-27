@@ -1,6 +1,6 @@
 ;Entering protected mode
+;org 0x7e00	;Used when going to protected mode was a binary
 [BITS 16]
-org 0x7e00
 
 cli
 lgdt [gdt_info]
@@ -34,7 +34,10 @@ start:
 	inc ebx
 	jmp .put_msg
 .end_msg:
-	jmp $	
+
+	extern cmain	;Used to go to C
+	call cmain	;Used to go to C
+;	jmp $
 
 gdt_start:
 ;null descriptor:
