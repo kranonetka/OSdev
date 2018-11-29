@@ -1,3 +1,4 @@
+; vim:ft=nasm
 [BITS 16]
 org 0x7c00
 
