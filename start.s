@@ -1,3 +1,4 @@
+; vim:ft=nasm
 ;Entering protected mode
 ;org 0x7e00	;Used when going to protected mode was a binary
 [BITS 16]
@@ -37,7 +38,20 @@ start:
 
 	extern cmain	;Used to go to C
 	call cmain	;Used to go to C
-;	jmp $
+
+	mov ebx, 80*24
+	mov ah, 0x1c
+	mov esi, CDone_msg
+.CDone:
+	lodsb
+	test al, al
+	jz .end_CDone
+	mov [gs:(ebx*2)], ax
+	inc ebx
+	jmp .CDone
+.end_CDone:
+
+	jmp $
 
 gdt_start:
 ;null descriptor:
@@ -97,6 +111,5 @@ gdt_info:
 	dw gdt_info - gdt_start - 1
 	dd gdt_start
 
+CDone_msg: db "C done", 0
 msg: db "Protected mode entered!", 0
-
-times 512 - ($ - $$) db 0
