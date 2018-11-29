@@ -2,8 +2,6 @@
 
 const char hello[] = "Hello, C world!";
 
-char a[0x1000];
-
 int strlen(const char *str_addr)
 {
 	const char *tmp = str_addr;
@@ -14,23 +12,27 @@ int strlen(const char *str_addr)
 	return tmp - str_addr;
 }
 
+void clear_screen(char color)
+{
+	int i = 0;
+	while (i < 80*25)
+	{
+		VIDEO_MEM[i * 2] = ' ';
+		VIDEO_MEM[i * 2 + 1] = color;
+		++i;
+	}	
+}
+
 int cmain()
 {
-	char *video = VIDEO_MEM;
+	clear_screen(0x1e);
+	
+	int n = strlen(hello);
 	int i = 0;
-	while (i < 80 * 25)
+	while (i < n)
 	{
-		video[i * 2] = 0x20;
-		video[i * 2 + 1] = 0x7;
+		VIDEO_MEM[i * 2] = hello[i];
 		++i;
 	}
-
-	int n = strlen(hello);
-	for (i = 0; i < n; ++i)
-	{
-		video[i*2] = hello[i];
-	}
-
-	while (1) {};
 	return 0;
 }
