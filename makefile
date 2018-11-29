@@ -1,7 +1,7 @@
 CFLAGS=-m32 -fno-pie -nostdlib -nodefaultlibs -nostartfiles -fno-builtin -Wno-int-to-pointer-cast -march=i386
 
 clear:
-	rm -f bootblock.bin disk.img cmain.o procmode.o kernel
+	rm -f bootblock.bin disk.img start.o cmain.o kernel
 
 build: clear bootblock.bin kernel
 	dd if=/dev/zero of=disk.img bs=1M count=1
@@ -21,4 +21,4 @@ start.o: start.s
 	nasm -felf $^ -o $@
 
 cmain.o: cmain.c
-	gcc $(CFLAGS) -o $@ $^
+	gcc $(CFLAGS) -c -o $@ $^
