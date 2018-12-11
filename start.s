@@ -40,7 +40,7 @@ start:
 	call cmain	;Used to go to C
 
 	mov ebx, 80*24
-	mov ah, 0x1c
+	mov ah, 0x0c
 	mov esi, CDone_msg
 .CDone:
 	lodsb
@@ -111,5 +111,5 @@ gdt_info:
 	dw gdt_info - gdt_start - 1
 	dd gdt_start
 
-CDone_msg: db "C done", 0
+CDone_msg: db "C DONE!", 0
 msg: db "Protected mode entered!", 0
