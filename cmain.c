@@ -1,4 +1,5 @@
-char * const VIDEO_MEM = (char *)0xb8000;
+#define PANIC(err_msg) PANIC_FUNC(err_msg, __FILE__, __LINE__)
+char* const VIDEO_MEM = (char *)0xb8000;
 unsigned short pointer = 0;
 
 char buffer[1024] = {0};
@@ -13,7 +14,8 @@ void clear_screen(char color)
 		++i;
 	}	
 }
-unsigned strlen(const char *str_addr)
+
+unsigned strlen(const char* str_addr)
 {
 	const char *tmp = str_addr;
 	while (*tmp++);
@@ -28,9 +30,13 @@ void scroll()
 		VIDEO_MEM[tmp_ptr << 1] = VIDEO_MEM[(tmp_ptr << 1) + 80*2];
 		++tmp_ptr;
 	}
+	while (tmp_ptr < 80*25)
+	{
+		VIDEO_MEM[tmp_ptr << 1] = ' ';
+		++tmp_ptr;
+	}
 	pointer = 80 * 24;
 }
-
 
 void print(const char* string)
 {
@@ -103,7 +109,7 @@ void reverse(char* str, int length)
 	}
 }
 
-char* itoa (int value, char * dest, const unsigned base)
+char* itoa (int value, char* dest, const unsigned base)
 {
 	unsigned char i = 0;
 	unsigned char isNegative = 0;
@@ -138,25 +144,32 @@ char* itoa (int value, char * dest, const unsigned base)
 	return dest;
 }
 
-void PANIC(const char *err_msg, const char *filename, int line)
+void PANIC_FUNC(const char* err_msg, const char* filename, int line)
 {
 	itoa(line, buffer, 10);
-	while (1)
-	{
-		print("PANIC: ");
-		print(filename);
-		print(":");
-		print(buffer);
-		print(": error: ");
-		print(err_msg);
-		print("\n");
-	}
+	print("PANIC: ");
+	print(filename);
+	print(":");
+	print(buffer);
+	print(": error: ");
+	print(err_msg);
+	print("\n");
+	while (1);
 }
 
 int cmain()
 {
 	clear_screen(0x1e);
-	PANIC("test panic", __FILE__, __LINE__);
+	print("test");
+	int i;
+	for (i = 0; i < 26; ++i)
+	{
+		print("\n");
+	}
+	print("test2\n");
+	print("\ttest3\n");
+	print("t\t4");
+	//while (1);
+	PANIC("test panic");
 	return 0;
-
 }
