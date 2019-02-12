@@ -10,7 +10,7 @@ org 0x7c00
 	mov fs, ax
 	mov gs, ax
 	mov ss, ax
-
+bootblock:
 ;start_with_ints:
 ;	mov ax, 0x0003
 ;	int 0x10	;change video mode
@@ -25,32 +25,32 @@ org 0x7c00
 ;	xor dx, dx
 ;	mov bp, msg
 ;	int 0x10	;print string
-
-start_without_ints:
-	;video memory at 0xb8000
-	mov ax, 0xb800
-	mov ds, ax
-
-	mov cx, 25*80
-	xor bx, bx
-.clear_screen:
-	mov word [bx], 0x1e20
-	db 0x43, 0x43
-	loop .clear_screen
-
-	mov si, msg
-	mov bx, 0xb800
-	mov gs, bx
-	xor bx, bx
-	mov ds, bx
-	mov ah, 0x1e
-.print_message:
-	lodsb
-	test al, al
-	jz .read_sectors
-	mov [gs:bx], ax
-	db 0x43, 0x43
-	jmp .print_message
+;
+;start_without_ints:
+;	;video memory at 0xb8000
+;	mov ax, 0xb800
+;	mov ds, ax
+;
+;	mov cx, 25*80
+;	xor bx, bx
+;.clear_screen:
+;	mov word [bx], 0x1e20
+;	db 0x43, 0x43
+;	loop .clear_screen
+;
+;	mov si, msg
+;	mov bx, 0xb800
+;	mov gs, bx
+;	xor bx, bx
+;	mov ds, bx
+;	mov ah, 0x1e
+;.print_message:
+;	lodsb
+;	test al, al
+;	jz .read_sectors
+;	mov [gs:bx], ax
+;	db 0x43, 0x43
+;	jmp .print_message
 .read_sectors:
 	mov bx, 0x07e0
 	mov es, bx
@@ -62,8 +62,8 @@ start_without_ints:
 
 jmp 0x7e00	;Переход в защищенный режим
 
-msg: db "Hello, world!", 0
-msg_len: equ $ - msg - 1
+;msg: db "Hello, world!", 0
+;msg_len: equ $ - msg - 1
 
 times 510 - ($ - $$) db 0
 db 0x55, 0xaa

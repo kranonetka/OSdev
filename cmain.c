@@ -12,7 +12,8 @@ void clear_screen(char color)
 		VIDEO_MEM[i << 1] = ' ';
 		VIDEO_MEM[(i << 1) + 1] = color;
 		++i;
-	}	
+	}
+	pointer = 0;
 }
 
 unsigned strlen(const char* str_addr)
@@ -40,7 +41,6 @@ void scroll()
 
 void print(const char* string)
 {
-//	static unsigned short pointer = 0;
 	const unsigned string_len = strlen(string);
 	unsigned i = 0;
 	while (i < string_len)
@@ -50,7 +50,7 @@ void print(const char* string)
 			unsigned char est_spaces =
 			80 - (pointer % 80)
 			?
-			(80 - (pointer % 80))
+			80 - (pointer % 80)
 			:
 			80;
 			while (est_spaces)
@@ -65,7 +65,7 @@ void print(const char* string)
 			unsigned char est_spaces =
 			8 - (pointer & 7)
 			?
-			(8 - (pointer & 7))
+			8 - (pointer & 7)
 			:
 			8;
 			while (est_spaces)
@@ -83,15 +83,6 @@ void print(const char* string)
 		if (pointer == 80*25)
 		{
 			scroll();
-/*
-			unsigned short tmp_ptr = 0;
-			while (tmp_ptr < 80*24)
-			{
-				VIDEO_MEM[tmp_ptr << 1] = VIDEO_MEM[(tmp_ptr << 1) + 80 * 2];
-				++tmp_ptr;
-			}
-			pointer = 80 * 24;
-*/
 		}
 		++i;
 	}
@@ -160,16 +151,6 @@ void PANIC_FUNC(const char* err_msg, const char* filename, int line)
 int cmain()
 {
 	clear_screen(0x1e);
-	print("test");
-	int i;
-	for (i = 0; i < 26; ++i)
-	{
-		print("\n");
-	}
-	print("test2\n");
-	print("\ttest3\n");
-	print("t\t4");
-	//while (1);
-	PANIC("test panic");
+	print("cmain");
 	return 0;
 }

@@ -24,17 +24,17 @@ start:
 	mov ss, ax
 	mov esp, 0xfffffff0
 
-	mov ebx, 80
-	mov ah, 0x4a
-	mov esi, msg
-.put_msg:
-	lodsb
-	test al, al
-	jz .end_msg
-	mov [gs:(ebx*2)], ax
-	inc ebx
-	jmp .put_msg
-.end_msg:
+;	mov ebx, 80
+;	mov ah, 0x4a
+;	mov esi, msg
+;.put_msg:
+;	lodsb
+;	test al, al
+;	jz .end_msg
+;	mov [gs:(ebx*2)], ax
+;	inc ebx
+;	jmp .put_msg
+;.end_msg:
 
 	extern cmain	;Used to go to C
 	call cmain	;Used to go to C
@@ -50,7 +50,6 @@ start:
 	inc ebx
 	jmp .CDone
 .end_CDone:
-
 	jmp $
 
 gdt_start:
@@ -112,4 +111,4 @@ gdt_info:
 	dd gdt_start
 
 CDone_msg: db "C DONE!", 0
-msg: db "Protected mode entered!", 0
+;msg: db "Protected mode entered!", 0
