@@ -14,7 +14,7 @@ kernel: cmain.o start.o
 run: build bochs.config
 	echo c | bochs -qf bochs.config
 
-bootblock.bin: bootblock.s
+bootblock.bin: bootblock.asm
 	nasm -fbin $^ -o $@
 
 %.o: %.asm
