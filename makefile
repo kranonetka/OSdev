@@ -17,7 +17,7 @@ run: build bochs.config
 bootblock.bin: bootblock.s
 	nasm -fbin $^ -o $@
 
-start.o: start.s
+%.o: %.asm
 	nasm -felf $^ -o $@
 
 cmain.o: cmain.c
