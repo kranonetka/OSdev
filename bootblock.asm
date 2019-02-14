@@ -15,7 +15,7 @@ read_sectors:
 	mov es, bx
 	xor bx, bx
 	mov ah, 0x02	;read sectors
-	mov al, 64	;16 sectors
+	mov al, 128	;128(max) sectors
 	mov cx, 0x0002	;cylinder 0, sector 2
 	mov dx, 0x0080	;head 0, dl = 80 - disk on ch0
 	int 0x13	;read to 0x07e00
