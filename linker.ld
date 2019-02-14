@@ -7,8 +7,8 @@ SECTIONS
 
 	.text . :
 	{
-		start.o(.text)
-		*(EXCLUDE_FILE(start.o) .text)
+		init_kernel.o(.text)
+		*(EXCLUDE_FILE(init_kernel.o) .text)
 	}
 
 	.data :
