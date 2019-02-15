@@ -1,20 +1,19 @@
 #include "video.h"
-#include "panic.h"
-char* const VIDEO_MEM = (char *)0xb8000;
-unsigned short pointer = 0;
+#include "common.h"
 
-void clear_screen(const char color)
+static char* const VIDEO_MEM = (char *)0xb8000;
+static unsigned short pointer = 0;
+
+
+static void set_cursor()
 {
-	pointer = 0;
-	while (pointer < 80*25*2)
-	{
-		VIDEO_MEM[pointer++] = ' ';
-		VIDEO_MEM[pointer++] = color;
-	}
-	pointer = 0;
+	outb(0x3d4, 14);
+	outb(0x3d5, pointer >> 8);
+	outb(0x3d4, 15);
+	outb(0x3d5, pointer);	
 }
 
-void scroll()
+static void scroll()
 {
 
 	unsigned short tmp_ptr = 0;
@@ -29,6 +28,19 @@ void scroll()
 		++tmp_ptr;
 	}
 	pointer = 80 * 24;
+	set_cursor();
+}
+
+void clear_screen(const char color)
+{
+	pointer = 0;
+	while (pointer < 80*25*2)
+	{
+		VIDEO_MEM[pointer++] = ' ';
+		VIDEO_MEM[pointer++] = color;
+	}
+	pointer = 0;
+	set_cursor();
 }
 
 void print(const char* string)
@@ -59,7 +71,10 @@ void print(const char* string)
 		{
 			scroll();
 		}
-
+		else
+		{
+			set_cursor();
+		}
 		++current_char;
 	}
 }

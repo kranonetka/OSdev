@@ -1,4 +1,5 @@
 #include "string.h"
+#include "common.h"
 
 unsigned strlen(const char* string)
 {
@@ -22,7 +23,8 @@ void reverse(char* str, int length)
 char* itoa (int value, const unsigned base)
 {
 	static char buffer[1024] = { 0 };
-	unsigned char i = 0, isNegative = 0;
+	unsigned char i = 0;
+	bool isNegative = false;
 
 	if (!value)
 	{
