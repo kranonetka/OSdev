@@ -2,7 +2,7 @@
 #include "string.h"
 #include "video.h"
 
-void PANIC_FUNC(const char* err_msg, const char* filename, int line)
+void PANIC_FUNC(const char* err_msg, const char* filename, const int line)
 {
 	print(">>>PANIC: ");
 	print(filename);

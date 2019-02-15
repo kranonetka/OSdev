@@ -8,7 +8,7 @@ unsigned strlen(const char* string)
 	return tmp - string - 1;
 }
 
-void reverse(char* str, int length)
+void reverse(char* const str, const int length)
 {
 	unsigned start = 0;
 	unsigned end = length - 1;
