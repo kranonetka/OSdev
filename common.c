@@ -3,7 +3,7 @@
 void outb(unsigned short int port, unsigned char value)
 {
 	asm volatile(
-		"outb %1, %0"
+		"out %0, %1\n\t"
 		:
 		: "dN" (port), "a" (value)
 	);
@@ -13,7 +13,7 @@ unsigned char inb(unsigned short int port)
 {
 	unsigned char retval;
 	asm volatile(
-		"inb %1, %0"
+		"in %0, %1\n\t"
 		: "=a" (retval)
 		: "dN" (port)
 	);
@@ -24,7 +24,7 @@ unsigned short int inw(unsigned short int port)
 {
 	unsigned short int ret;
 	asm volatile(
-		"inw %1, %0"
+		"in %0, %1\n\t"
 		: "=a" (ret)
 		: "dN" (port)
 	);
