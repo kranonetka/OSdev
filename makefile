@@ -1,4 +1,4 @@
-CFLAGS=-m32 -fno-pie -nostdlib -nodefaultlibs -nostartfiles -fno-builtin -Wno-int-to-pointer-cast -march=i386
+CFLAGS=-m32 -fno-pie -nostdlib -nodefaultlibs -nostartfiles -fno-builtin -Wno-int-to-pointer-cast -march=i386 -masm=intel
 
 build: clean bootblock.bin kernel
 	dd if=/dev/zero of=disk.img bs=1M count=1
@@ -8,7 +8,7 @@ build: clean bootblock.bin kernel
 clean:
 	rm -f bootblock.bin kernel disk.img *.o
 
-kernel: init_kernel.o cmain.o common.o video.o panic.o string.o
+kernel: init_kernel.o cmain.o common.o video.o panic.o string.o idt.o isr.o interrupt.o
 	ld -T linker.ld -o $@ $^
 
 run: build bochs.config
