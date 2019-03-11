@@ -28,5 +28,5 @@ unsigned short int inw(unsigned short int port)
 		: "=a" (retval)
 		: "dN" (port)
 	);
-	return ret;
+	return retval;
 } 
