@@ -22,10 +22,10 @@ unsigned char inb(unsigned short int port)
 
 unsigned short int inw(unsigned short int port)
 {
-	unsigned short int ret;
+	unsigned short int retval;
 	asm volatile(
 		"in %0, %1\n\t"
-		: "=a" (ret)
+		: "=a" (retval)
 		: "dN" (port)
 	);
 	return ret;
