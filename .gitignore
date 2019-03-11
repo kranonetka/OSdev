@@ -1,0 +1,4 @@
+bootblock.bin
+kernel
+disk.img
+*.o
