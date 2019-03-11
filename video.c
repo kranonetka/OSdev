@@ -5,7 +5,7 @@ static char* const VIDEO_MEM = (char *)0xb8000;
 static unsigned short pointer = 0;
 
 
-static void set_cursor()
+static void update_cursor()
 {
 	outb(0x3d4, 14);
 	outb(0x3d5, pointer >> 8);
@@ -28,7 +28,7 @@ static void scroll()
 		++tmp_ptr;
 	}
 	pointer = 80 * 24;
-	set_cursor();
+	update_cursor();
 }
 
 void clear_screen(const char color)
@@ -40,7 +40,7 @@ void clear_screen(const char color)
 		VIDEO_MEM[pointer++] = color;
 	}
 	pointer = 0;
-	set_cursor();
+	update_cursor();
 }
 
 void print(const char* string)
@@ -73,7 +73,7 @@ void print(const char* string)
 		}
 		else
 		{
-			set_cursor();
+			update_cursor();
 		}
 		++current_char;
 	}
