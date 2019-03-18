@@ -3,7 +3,7 @@
 #include "string.h"
 #include "common.h"
 
-#define int_with_errcode regs.err_code == 8 || (10 <= regs.err_code && regs.err_code <= 14) || regs.err_code == 17
+#define int_with_errcode (regs.int_no == 8) || ((10 <= regs.int_no) && (regs.int_no <= 14)) || (regs.int_no == 17)
 
 void isr_handler(registers_t regs)
 {
@@ -31,7 +31,7 @@ void isr_handler(registers_t regs)
 	"Virtualization Exception",
 	};
 
-	print("recieved interrupt: ");
+	print(">>>INTERRUPT ");
 	print(itoa(regs.int_no, 10));
 	print(": ");
 	if (regs.int_no < 21)
@@ -45,8 +45,9 @@ void isr_handler(registers_t regs)
 
 	if (int_with_errcode)
 	{
-		print("\nerror code: ");
+		print("(");
 		print(itoa(regs.err_code, 10));
+		print(")<<<");
 	}
 	while (true);
 }
