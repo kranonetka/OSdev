@@ -13,7 +13,6 @@
 	global isr%1
 	isr%1:
 		push %1
-		push %1
 		jmp isr_stub
 %endmacro
 
