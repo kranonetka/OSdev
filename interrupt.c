@@ -45,9 +45,13 @@ void isr_handler(registers_t regs)
 
 	if (int_with_errcode)
 	{
-		print("(");
+		print(" (err code ");
 		print(itoa(regs.err_code, 10));
 		print(")<<<");
+	}
+	else
+	{
+		print("<<<");
 	}
 	while (true);
 }
