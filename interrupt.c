@@ -1,6 +1,9 @@
 #include "interrupt.h"
 #include "video.h"
 #include "string.h"
+#include "common.h"
+
+#define int_with_errcode regs.err_code == 8 || (10 <= regs.err_code && regs.err_code <= 14) || regs.err_code == 17
 
 void isr_handler(registers_t regs)
 {
@@ -39,5 +42,11 @@ void isr_handler(registers_t regs)
 	{
 		print(int_desk[15]);
 	}
-	print("\n");
+
+	if (int_with_errcode)
+	{
+		print("\nerror code: ");
+		print(itoa(regs.err_code, 10));
+	}
+	while (true);
 }
