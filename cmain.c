@@ -4,14 +4,16 @@
 #include "string.h"
 #include "idt.h"
 
+__attribute__((section(".text.cmain")))
 int cmain()
 {
 	clear_screen(0x1e);
 	print("Hello, C world!\n");
 	init_idt();
+
 	asm volatile(
-		"int 16\n\t"
-		"int 14\n\t"
+		"int 2\n\t"
 	);
-	return 0;
+
+	while (true);
 }

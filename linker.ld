@@ -5,10 +5,10 @@ SECTIONS
 {
 	. = 0x7e00;
 
-	.text . :
+	.text :
 	{
-		init_kernel.o(.text)
-		*(EXCLUDE_FILE(init_kernel.o) .text)
+		cmain.o(.text.cmain)
+		*(.text)
 	}
 
 	.data :

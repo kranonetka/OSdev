@@ -8,7 +8,7 @@ build: clean bootblock.bin kernel
 clean:
 	rm -f bootblock.bin kernel disk.img *.o
 
-kernel: init_kernel.o cmain.o common.o video.o panic.o string.o idt.o isr.o interrupt.o
+kernel: cmain.o common.o video.o panic.o string.o idt.o isr.o interrupt.o
 	ld -T linker.ld -o $@ $^
 
 run: build bochs.config
