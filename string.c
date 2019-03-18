@@ -44,7 +44,7 @@ char* itoa (int value, const unsigned base)
 		unsigned char digit = value % base;
 		if (digit > 9)
 		{
-			digit += 'a' - '9' - 1;
+			digit += 0x27; // 0x27 == 'a' - '9' - 1
 		}
 		buffer[i++] = digit + '0';
 		value /= base;
