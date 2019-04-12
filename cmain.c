@@ -3,6 +3,7 @@
 #include "panic.h"
 #include "string.h"
 #include "idt.h"
+#include "time.h"
 
 __attribute__((section(".text.cmain")))
 int cmain()
@@ -10,10 +11,8 @@ int cmain()
 	clear_screen(0x1e);
 	print("Hello, C world!\n");
 	init_idt();
-
-	asm volatile(
-		"int 2\n\t"
-	);
+	
+	init_timer(50);
 
 	while (true);
 }

@@ -16,6 +16,13 @@
 		jmp isr_stub
 %endmacro
 
+%macro IRQ 2
+	global irq%1
+	irq%1:
+		push %2
+		jmp irq_stub
+%endmacro
+
 section .text
 
 ISR_NOERR 0
@@ -57,4 +64,29 @@ isr_stub:
 	call isr_handler
 	popad
 	add esp,8
+	iret
+
+IRQ 0, 32
+IRQ 1, 33
+IRQ 2, 34
+IRQ 3, 35
+IRQ 4, 36
+IRQ 5, 37
+IRQ 6, 38
+IRQ 7, 39
+IRQ 8, 40
+IRQ 9, 41
+IRQ 10, 42
+IRQ 11, 43
+IRQ 12, 44
+IRQ 13, 45
+IRQ 14, 46
+IRQ 15, 47
+
+extern irq_handler
+irq_stub:
+	pushad
+	call irq_handler
+	popad
+	add esp,4
 	iret

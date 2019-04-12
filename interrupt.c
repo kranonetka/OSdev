@@ -3,11 +3,15 @@
 #include "string.h"
 #include "common.h"
 
+#define IRQ_COUNT 16
+
 #define int_with_errcode (regs.int_no == 8) || ((10 <= regs.int_no) && (regs.int_no <= 14)) || (regs.int_no == 17)
 
-void isr_handler(registers_t regs)
+
+
+void isr_handler(int_registers_t regs)
 {
-	static char* int_desk[] = {
+	static char* int_desc[] = {
 	"Divide Error",
 	"Debug Exception",
 	"NMI Interrupt",
@@ -36,11 +40,11 @@ void isr_handler(registers_t regs)
 	print(": ");
 	if (regs.int_no < 21)
 	{
-		print(int_desk[regs.int_no]);
+		print(int_desc[regs.int_no]);
 	}
 	else
 	{
-		print(int_desk[15]);
+		print(int_desc[15]);
 	}
 
 	if (int_with_errcode)
@@ -48,10 +52,29 @@ void isr_handler(registers_t regs)
 		print(" (err code ");
 		print(itoa(regs.err_code, 10));
 		print(")<<<");
+		print(itoa(regs.ss,16));
 	}
 	else
 	{
 		print("<<<");
 	}
 	while (true);
+}
+
+void irq_handler(irq_registers_t regs)
+{
+	print(">>>IRQ ");
+	print(itoa(regs.int_no-32, 10));
+	print("<<<");
+
+	if (regs.int_no == 32)
+	{
+		print("\nTick!");
+	}
+
+	if (regs.int_no >= 40)
+	{
+		outb(0xa0, 0x20); // Sends EOI to slave cmd
+	}
+	outb(0x20, 0x20);	// Sends EOI to master cmd
 }

@@ -1,6 +1,7 @@
 #include "idt.h"
+#include "common.h"
 
-#define IDT_ENTRIES_C 32
+#define	IDT_ENTRIES_C	48
 
 IDTDescr_t idt_entries[IDT_ENTRIES_C] __attribute__((aligned(8)));
 
@@ -62,5 +63,40 @@ void init_idt()
 	idt_set_gate(29, (unsigned int)isr29, 0x08, 0x8E);
 	idt_set_gate(30, (unsigned int)isr30, 0x08, 0x8E);
 	idt_set_gate(31, (unsigned int)isr31, 0x08, 0x8E);
+
+	idt_set_gate(32, (unsigned int)irq0, 0x08, 0x8E);
+	idt_set_gate(33, (unsigned int)irq1, 0x08, 0x8E);
+	idt_set_gate(34, (unsigned int)irq2, 0x08, 0x8E);
+	idt_set_gate(35, (unsigned int)irq3, 0x08, 0x8E);
+	idt_set_gate(36, (unsigned int)irq4, 0x08, 0x8E);
+	idt_set_gate(37, (unsigned int)irq5, 0x08, 0x8E);
+	idt_set_gate(38, (unsigned int)irq6, 0x08, 0x8E);
+	idt_set_gate(39, (unsigned int)irq7, 0x08, 0x8E);
+	idt_set_gate(40, (unsigned int)irq8, 0x08, 0x8E);
+	idt_set_gate(41, (unsigned int)irq9, 0x08, 0x8E);
+	idt_set_gate(42, (unsigned int)irq10, 0x08, 0x8E);
+	idt_set_gate(43, (unsigned int)irq11, 0x08, 0x8E);
+	idt_set_gate(44, (unsigned int)irq12, 0x08, 0x8E);
+	idt_set_gate(45, (unsigned int)irq13, 0x08, 0x8E);
+	idt_set_gate(46, (unsigned int)irq14, 0x08, 0x8E);
+	idt_set_gate(47, (unsigned int)irq15, 0x08, 0x8E);
+	
+	//PIC remapping
+	outb(MASTER_CMD, 0x11);	// start initialization master
+	outb(SLAVE_CMD, 0x11);	// start initialization slave
+	outb(MASTER_DATA, 32);	// MASTER interrupts [32:39] (irq0-irq7) //ICW2
+	outb(SLAVE_DATA, 40);	// SLAVE interrupts [40:47] (irq8-irq15) //ICW2
+	outb(MASTER_DATA, 0x4);	// Slave pic at IRQ2 (4 == 0b100) //ICW3
+	outb(SLAVE_DATA, 0x2);	// Slave pic's cascade(??) (2 == b10) //ICW3
+	outb(MASTER_DATA, 0x1);	// ICW4
+	outb(SLAVE_DATA, 0x1);	// ICW4
+
+	outb(MASTER_DATA, 0xff);	// Set IMR for MASTER
+	outb(SLAVE_DATA, 0xff);		// Sets IMR for SLAVE
+
+	asm volatile(
+		"sti\n\t"
+	);
+
 	lidt();
 }
