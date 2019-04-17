@@ -61,15 +61,69 @@ void isr_handler(int_registers_t regs)
 	while (true);
 }
 
+char scancode_to_ascii(unsigned char scancode)
+{
+	static char const* const rows[4] = {
+		"1234567890-=\b",
+		"qwertyuiop[]\n",
+		"asdfghjkl;'",
+		"zxcvbnm,./"
+	};
+
+	if (0x02 <= scancode && scancode <= 0x0e)
+	{
+		scancode -= 0x02;
+		return rows[0][scancode];
+	}
+	if (0x10 <= scancode && scancode <= 0x1c)
+	{
+		scancode -= 0x10;
+		return rows[1][scancode];
+	}
+	if (0x1e <= scancode && scancode <= 0x28)
+	{
+		scancode -= 0x1e;
+		return rows[2][scancode];
+	}
+	if (0x2c <= scancode && scancode <= 0x35)
+	{
+		scancode -= 0x2c;
+		return rows[3][scancode];
+	}
+	if (scancode == 0x39)
+	{
+		return ' ';
+	}
+	return 0;
+}
+
+void keyboard_handler()
+{
+	unsigned char status = inb(0x64);
+	if ((status & 0x1) && !(status & 0x20))
+	{
+		static char chars_to_print[2] = {0, 0};
+		unsigned char scancode = inb(0x60);
+		chars_to_print[0] = scancode_to_ascii(scancode);
+		//print(itoa(chars_to_print[0], 10));
+		print(chars_to_print);
+	}
+}
+
 void irq_handler(irq_registers_t regs)
 {
+/*
 	print(">>>IRQ ");
 	print(itoa(regs.int_no-32, 10));
 	print("<<<");
-
+*/
 	if (regs.int_no == 32)
 	{
 		print("\nTick!");
+	}
+	if (regs.int_no == 33)
+	{
+		keyboard_handler();
 	}
 
 	if (regs.int_no >= 40)

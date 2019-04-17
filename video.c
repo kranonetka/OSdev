@@ -62,6 +62,12 @@ void print(const char* string)
 					--pointer;
 				}
 				break;
+			case '\b':
+				if (pointer > 0)
+				{
+					--pointer;
+					VIDEO_MEM[pointer << 1] = ' ';
+				}
 			default:
 				VIDEO_MEM[pointer << 1] = (*current_char);
 				++pointer;
