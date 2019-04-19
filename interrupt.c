@@ -52,7 +52,7 @@ void isr_handler(int_registers_t regs)
 		print(" (err code ");
 		print(itoa(regs.err_code, 10));
 		print(")<<<");
-		print(itoa(regs.ss,16));
+		print(itoa(regs.ss, 16));
 	}
 	else
 	{
@@ -110,7 +110,6 @@ static void keyboard_handler()
 		static char chars_to_print[2] = {0, 0};
 		unsigned char scancode = inb(0x60);
 		chars_to_print[0] = scancode_to_ascii(scancode);
-		//print(itoa(chars_to_print[0], 10));
 		print(chars_to_print);
 	}
 }
