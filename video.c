@@ -28,7 +28,6 @@ static void scroll()
 		++tmp_ptr;
 	}
 	pointer = 80 * 24;
-	update_cursor();
 }
 
 void clear_screen(const char color)
@@ -68,6 +67,7 @@ void print(const char* string)
 					--pointer;
 					VIDEO_MEM[pointer << 1] = ' ';
 				}
+				break;
 			default:
 				VIDEO_MEM[pointer << 1] = (*current_char);
 				++pointer;
@@ -77,10 +77,7 @@ void print(const char* string)
 		{
 			scroll();
 		}
-		else
-		{
-			update_cursor();
-		}
+		update_cursor();
 		++current_char;
 	}
 }

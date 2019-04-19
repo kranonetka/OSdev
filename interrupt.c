@@ -11,7 +11,7 @@
 
 void isr_handler(int_registers_t regs)
 {
-	static char* int_desc[] = {
+	static const char* const int_desc[] = {
 	"Divide Error",
 	"Debug Exception",
 	"NMI Interrupt",
@@ -61,7 +61,12 @@ void isr_handler(int_registers_t regs)
 	while (true);
 }
 
-char scancode_to_ascii(unsigned char scancode)
+static void PIT_handler()
+{
+	print("Tick!\n");
+}
+
+static char scancode_to_ascii(unsigned char scancode)
 {
 	static char const* const rows[4] = {
 		"1234567890-=\b",
@@ -97,7 +102,7 @@ char scancode_to_ascii(unsigned char scancode)
 	return 0;
 }
 
-void keyboard_handler()
+static void keyboard_handler()
 {
 	unsigned char status = inb(0x64);
 	if ((status & 0x1) && !(status & 0x20))
@@ -119,7 +124,7 @@ void irq_handler(irq_registers_t regs)
 */
 	if (regs.int_no == 32)
 	{
-		print("\nTick!");
+		PIT_handler();
 	}
 	if (regs.int_no == 33)
 	{
