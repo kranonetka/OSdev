@@ -87,16 +87,16 @@ void init_idt()
 	outb(MASTER_DATA, 32);	// MASTER interrupts [32:39] (irq0-irq7) //ICW2
 	outb(SLAVE_DATA, 40);	// SLAVE interrupts [40:47] (irq8-irq15) //ICW2
 	outb(MASTER_DATA, 0x4);	// Slave pic at IRQ2 (4 == 0b100) //ICW3
-	outb(SLAVE_DATA, 0x2);	// Slave pic's cascade(??) (2 == b10) //ICW3
+	outb(SLAVE_DATA, 0x2);	// Master pic at IRQ2 //ICW3
 	outb(MASTER_DATA, 0x1);	// ICW4
 	outb(SLAVE_DATA, 0x1);	// ICW4
 
 	outb(MASTER_DATA, 0xff);	// Set IMR for MASTER
 	outb(SLAVE_DATA, 0xff);		// Sets IMR for SLAVE
 
+	lidt();
+
 	asm volatile(
 		"sti\n\t"
 	);
-
-	lidt();
 }
