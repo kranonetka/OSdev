@@ -40,7 +40,9 @@ jmp 0x08:($+5) ;Инициализация регистра cs
 	mov ss, ax
 	mov esp, 0xfffffff0
 
-jmp 0x7e00	;Переход на ядро
+push esp
+call 0x7e00	;Переход на ядро
+add esp, 4
 
 gdt_start:
 ;null descriptor:
