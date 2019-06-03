@@ -35,7 +35,7 @@ unsigned short int inw(const unsigned short int port)
 	return retval;
 }
 
-unsigned int malloc(unsigned int size)
+unsigned int malloc(const unsigned int size)
 {
 	if (alloc_mem + size > alloc_limit)
 	{
@@ -43,10 +43,15 @@ unsigned int malloc(unsigned int size)
 	}
 	unsigned int ret_mem = alloc_mem;
 	alloc_mem += size;
+	char *mem = (char *)ret_mem;
+	while (mem < (char *)alloc_mem)
+	{
+		*mem = 0;
+	}
 	return ret_mem;	
 }
 
-void free(unsigned int ptr)
+void free(const unsigned int ptr)
 {
 	return;
 }
