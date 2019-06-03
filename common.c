@@ -44,7 +44,7 @@ unsigned int malloc(const unsigned int size)
 	unsigned int ret_mem = alloc_mem;
 	alloc_mem += size;
 	char *mem = (char *)ret_mem;
-	while (mem < (char *)alloc_mem)
+	while (mem++ < (char *)alloc_mem)
 	{
 		*mem = 0;
 	}
