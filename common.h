@@ -6,5 +6,5 @@ void outb(const unsigned short int port, const unsigned char value);
 unsigned char inb(const unsigned short int port);
 unsigned short int inw(const unsigned short int port);
 
-unsigned int malloc(unsigned int size);
-void free(unsigned int ptr);
+unsigned int malloc(const unsigned int size);
+void free(const unsigned int ptr);
