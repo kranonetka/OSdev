@@ -34,13 +34,11 @@ jmp 0x08:($+5) ;Инициализация регистра cs
 	mov ds, ax
 	mov es, ax
 	mov fs, ax
+	mov ss, ax
 	mov ax, 0x18
 	mov gs, ax
-	mov ax, 0x20
-	mov ss, ax
-	mov esp, 0xfffffff0
+	mov esp, 0x7fffe
 
-push esp
 call 0x7e00	;Переход на ядро
 add esp, 4
 
