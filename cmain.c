@@ -5,7 +5,7 @@
 #include "idt.h"
 #include "time.h"
 #include "keyboard.h"
-
+#include "task.h"
 
 __attribute__((section(".text.cmain")))
 int cmain()
@@ -14,7 +14,7 @@ int cmain()
 	print("Hello, C world!\n");
 	init_idt();
 	init_keyboard();
-	//init_timer(50);
-
+	init_tasking();
+	init_timer(100500);
 	while (true);
 }

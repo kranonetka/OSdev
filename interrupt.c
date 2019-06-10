@@ -2,6 +2,7 @@
 #include "video.h"
 #include "string.h"
 #include "common.h"
+#include "task.h"
 
 #define IRQ_COUNT 16
 
@@ -61,9 +62,33 @@ void isr_handler(int_registers_t regs)
 	while (true);
 }
 
-static void PIT_handler()
+static unsigned int tick_counter = 0;
+
+extern task_t* task_queue;
+extern task_t* current_task;
+extern void switch_task(irq_registers_t context);
+static void PIT_handler(irq_registers_t context)
 {
-	print("Tick!\n");
+	//print("Tick!\n");
+	if (task_queue)
+	{
+		print("tasking\n");
+		task_t *task_to_switch = current_task->next;
+		while (!task_to_switch->ready)
+		{
+			task_to_switch = task_to_switch->next;
+			if (task_to_switch == current_task)
+			{
+				return;			}
+		}
+		switch_task(context);
+	}
+	else
+	{
+		print("Tick ");
+		print(itoa(tick_counter++, 10));
+		print("!\n");
+	}
 }
 
 static char scancode_to_ascii(unsigned char scancode)
@@ -123,7 +148,7 @@ void irq_handler(irq_registers_t regs)
 */
 	if (regs.int_no == 32)
 	{
-		PIT_handler();
+		PIT_handler(regs);
 	}
 	if (regs.int_no == 33)
 	{
