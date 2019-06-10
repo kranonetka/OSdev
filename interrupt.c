@@ -66,22 +66,23 @@ static unsigned int tick_counter = 0;
 
 extern task_t* task_queue;
 extern task_t* current_task;
-extern void switch_task(irq_registers_t context);
-static void PIT_handler(irq_registers_t context)
+extern void switch_task(task_t* task_to_switch, irq_registers_t* current_context);
+static void PIT_handler(irq_registers_t* context_ptr)
 {
 	//print("Tick!\n");
 	if (task_queue)
 	{
-		print("tasking\n");
+		//print("tasking\n");
 		task_t *task_to_switch = current_task->next;
 		while (!task_to_switch->ready)
 		{
-			task_to_switch = task_to_switch->next;
 			if (task_to_switch == current_task)
 			{
-				return;			}
+				return;
+			}
+			task_to_switch = task_to_switch->next;
 		}
-		switch_task(context);
+		switch_task(task_to_switch, context_ptr);
 	}
 	else
 	{
@@ -148,7 +149,7 @@ void irq_handler(irq_registers_t regs)
 */
 	if (regs.int_no == 32)
 	{
-		PIT_handler(regs);
+		PIT_handler(&regs);
 	}
 	if (regs.int_no == 33)
 	{

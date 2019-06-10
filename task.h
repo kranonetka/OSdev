@@ -6,7 +6,6 @@ struct task_struct
 {
 	irq_registers_t context;
 	unsigned int id;
-	unsigned int stack;
 	bool ready;
 	struct task_struct *next;
 } __attribute__((packed));

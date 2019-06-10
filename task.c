@@ -50,12 +50,10 @@ static void create_task(unsigned int fn)
 	}
 	current_task->next = task_queue;
 	
-	current_task->stack = malloc(4096) + 4092;
-	*((unsigned int*)current_task->stack) = (unsigned int)&task_end;
-	current_task->id = last_task_id++;
-
 	current_task->context.ss = 0x10;
-	current_task->context.useresp = current_task->stack;
+	current_task->context.useresp = malloc(4096) + 4092;
+	*((unsigned int*)current_task->context.useresp) = (unsigned int)&task_end;
+	current_task->id = last_task_id++;
 	current_task->context.eflags = 0x202; //ints enabled 
 	current_task->context.cs = 0x08;
 	current_task->context.eip = fn;
