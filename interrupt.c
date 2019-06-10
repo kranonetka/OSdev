@@ -53,7 +53,7 @@ void isr_handler(int_registers_t regs)
 		print(" (err code ");
 		print(itoa(regs.err_code, 10));
 		print(")<<<");
-		print(itoa(regs.ss, 16));
+		print(itoa(regs.ss, 10));
 	}
 	else
 	{
@@ -70,19 +70,26 @@ extern void switch_task(task_t* task_to_switch, irq_registers_t* current_context
 static void PIT_handler(irq_registers_t* context_ptr)
 {
 	//print("Tick!\n");
+	++tick_counter;
 	if (task_queue)
 	{
-		//print("tasking\n");
-		task_t *task_to_switch = current_task->next;
-		while (!task_to_switch->ready)
+		if (tick_counter == 100)
 		{
-			if (task_to_switch == current_task)
+			//print("tasking\n");
+			task_t *task_to_switch = current_task->next;
+			while (!task_to_switch->ready)
 			{
-				return;
+				if (task_to_switch == current_task)
+				{
+					return;
+				}
+				task_to_switch = task_to_switch->next;
 			}
-			task_to_switch = task_to_switch->next;
+			print("Start switching\n");
+			switch_task(task_to_switch, context_ptr);
+			print("Switching done\n");
+			tick_counter = 0;
 		}
-		switch_task(task_to_switch, context_ptr);
 	}
 	else
 	{

@@ -15,6 +15,6 @@ int cmain()
 	init_idt();
 	init_keyboard();
 	init_tasking();
-	init_timer(100500);
+	//init_timer(100500);
 	while (true);
 }
