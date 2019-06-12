@@ -86,7 +86,9 @@ IRQ 15, 47
 extern irq_handler
 irq_stub:
 	pushad
+	push esp
 	call irq_handler
+	pop esp
 	popad
 	add esp,4
 	iret

@@ -35,6 +35,15 @@ unsigned short int inw(const unsigned short int port)
 	return retval;
 }
 
+void memset(char * const dest, const unsigned char val, const unsigned int len)
+{
+	unsigned int i = 0;
+	while (i < len)
+	{
+		dest[i++] = val;
+	}
+}
+
 unsigned int malloc(const unsigned int size)
 {
 	if (alloc_mem + size > alloc_limit)
@@ -43,12 +52,8 @@ unsigned int malloc(const unsigned int size)
 	}
 	unsigned int ret_mem = alloc_mem;
 	alloc_mem += size;
-	char *mem = (char *)ret_mem;
-	while (mem++ < (char *)alloc_mem)
-	{
-		*mem = 0;
-	}
-	return ret_mem;	
+	memset((char*)ret_mem, 0, size);
+	return ret_mem;
 }
 
 void free(const unsigned int ptr)

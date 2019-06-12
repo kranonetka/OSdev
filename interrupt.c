@@ -2,6 +2,7 @@
 #include "video.h"
 #include "string.h"
 #include "common.h"
+#include "task.h"
 
 #define IRQ_COUNT 16
 
@@ -52,7 +53,6 @@ void isr_handler(int_registers_t regs)
 		print(" (err code ");
 		print(itoa(regs.err_code, 10));
 		print(")<<<");
-		print(itoa(regs.ss, 16));
 	}
 	else
 	{
@@ -61,9 +61,56 @@ void isr_handler(int_registers_t regs)
 	while (true);
 }
 
-static void PIT_handler()
+static unsigned int tick_counter = 0;
+
+extern task_t* task_queue;
+extern task_t* current_task;
+static void PIT_handler(irq_registers_t* context_ptr)
 {
-	print("Tick!\n");
+	//print("Tick!\n");
+	++tick_counter;
+	if (task_queue)
+	{
+		if (tick_counter == 1)
+		{
+			//print("Start switching\n");
+			if (current_task == 0)
+			{
+				context_ptr->esp = task_queue->stack+4;
+				current_task = task_queue;
+				//switch_task(task_queue, context_ptr);
+			}
+			else
+			{
+				//print("tasking\n");
+				task_t *task_to_switch = current_task->next;
+				while (!(task_to_switch->ready))
+				{
+					if (task_to_switch == current_task)
+					{
+						print("All tasks done\n");
+						task_queue = 0;
+						return;
+					}
+					task_to_switch = task_to_switch->next;
+				}
+				current_task->stack = (unsigned int)&context_ptr->esp;
+				context_ptr->esp = task_to_switch->stack+4;
+				current_task = task_to_switch;
+				//switch_task(task_to_switch, context_ptr);
+			}
+			//print("Switching done\n");
+			tick_counter = 0;
+		}
+	}
+/*
+	else
+	{
+		print("Tick ");
+		print(itoa(tick_counter++, 10));
+		print("!\n");
+	}
+*/
 }
 
 static char scancode_to_ascii(unsigned char scancode)
@@ -123,7 +170,7 @@ void irq_handler(irq_registers_t regs)
 */
 	if (regs.int_no == 32)
 	{
-		PIT_handler();
+		PIT_handler(&regs);
 	}
 	if (regs.int_no == 33)
 	{
