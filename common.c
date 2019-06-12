@@ -53,9 +53,32 @@ unsigned int malloc(const unsigned int size)
 	unsigned int ret_mem = alloc_mem;
 	alloc_mem += size;
 	memset((char*)ret_mem, 0, size);
+	return ret_mem;
 }
 
 void free(const unsigned int ptr)
 {
 	return;
+}
+
+void gap()
+{
+	asm volatile(
+		"nop\n\t"
+		"nop\n\t"
+		"nop\n\t"
+		"nop\n\t"
+		"nop\n\t"
+		"nop\n\t"
+		"nop\n\t"
+		"nop\n\t"
+		"nop\n\t"
+		"nop\n\t"
+		"nop\n\t"
+		"nop\n\t"
+		"nop\n\t"
+		"nop\n\t"
+		"nop\n\t"
+		"nop\n\t"
+	);
 }

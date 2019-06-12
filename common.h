@@ -9,3 +9,5 @@ unsigned short int inw(const unsigned short int port);
 void memset(char * const dest, const unsigned char val, const unsigned int len);
 unsigned int malloc(const unsigned int size);
 void free(const unsigned int ptr);
+
+void gap();

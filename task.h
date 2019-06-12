@@ -4,7 +4,8 @@
 
 struct task_struct
 {
-	irq_registers_t context;
+	//irq_registers_t context;
+	unsigned int stack;
 	unsigned int id;
 	bool ready;
 	struct task_struct *next;
