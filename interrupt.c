@@ -88,6 +88,8 @@ static void PIT_handler(irq_registers_t* context_ptr)
 				{
 					if (task_to_switch == current_task)
 					{
+						print("All tasks done\n");
+						task_queue = 0;
 						return;
 					}
 					task_to_switch = task_to_switch->next;
@@ -101,12 +103,14 @@ static void PIT_handler(irq_registers_t* context_ptr)
 			tick_counter = 0;
 		}
 	}
+/*
 	else
 	{
 		print("Tick ");
 		print(itoa(tick_counter++, 10));
 		print("!\n");
 	}
+*/
 }
 
 static char scancode_to_ascii(unsigned char scancode)
