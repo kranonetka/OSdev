@@ -44,6 +44,7 @@ void clear_screen(const char color)
 
 void print(const char* string)
 {
+	save_state();
 	char* current_char = (char *)string;
 	while (*current_char)
 	{
@@ -80,4 +81,5 @@ void print(const char* string)
 		update_cursor();
 		++current_char;
 	}
+	restore_state();
 }

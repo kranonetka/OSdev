@@ -16,7 +16,7 @@ static void task1()
 	int i = 0;
 	while (i++ < PRINT_COUNT)
 	{
-		print("aaaaaaaa\n");
+		print("........\n");
 	}
 }
 
@@ -25,7 +25,7 @@ static void task2()
 	int i = 0;
 	while (i++ < PRINT_COUNT)
 	{
-		print("bbbbbbbb\n");
+		print("--------\n");
 	}
 }
 
@@ -34,7 +34,7 @@ static void task3()
 	int i = 0;
 	while (i++ < PRINT_COUNT)
 	{
-		print("cccccccc\n");
+		print("////////\n");
 	}
 }
 
@@ -43,7 +43,7 @@ static void task4()
 	int i = 0;
 	while (i++ < PRINT_COUNT)
 	{
-		print("dddddddd\n");
+		print("55555555\n");
 	}
 }
 
@@ -78,10 +78,10 @@ static void create_task(unsigned int fn)
 	}
 
 	curr->id = last_task_id++;
-	curr->stack = malloc(8192) + 4092;
+	curr->stack = malloc(8192) + 8188;
 	*((unsigned int*)curr->stack) = (unsigned int)task_end;
 	curr->stack -= sizeof(irq_registers_t);
-/*
+/* i don't know why this doesn't work
 	irq_registers_t *regs = (irq_registers_t*)current_task->stack;
 	regs->eflags = 0x202; //ints enabled 
 	regs->cs = 0x08;
@@ -94,7 +94,7 @@ static void create_task(unsigned int fn)
 	*((unsigned int*)(curr->stack + 0 *4)) = curr->stack+4;
 
 	curr->ready = true;
-	gap();
+//	gap(); //for debug
 }
 
 void init_tasking()
@@ -103,5 +103,5 @@ void init_tasking()
 	create_task((unsigned int)task2);
 	create_task((unsigned int)task3);
 	create_task((unsigned int)task4);
-	init_timer(50);
+	init_timer(10);
 }
