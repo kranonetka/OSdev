@@ -5,7 +5,7 @@
 #include "time.h"
 #include "interrupt.h"
 
-#define PRINT_COUNT 0xff
+#define PRINT_COUNT 0xffff
 
 unsigned int last_task_id = 0;
 task_t* task_queue = 0;
@@ -56,7 +56,7 @@ static void task_end()
 	while (true);
 }
 
-static void create_task(unsigned int fn)
+static void create_task(const unsigned int fn, const unsigned int task_end_handler)
 {
 	save_state();
 	task_t *curr;
@@ -80,7 +80,7 @@ static void create_task(unsigned int fn)
 
 	curr->id = last_task_id++;
 	curr->stack = malloc(8192) + 8188;
-	*((unsigned int*)curr->stack) = (unsigned int)task_end;
+	*((unsigned int*)curr->stack) = task_end_handler;
 	curr->stack -= sizeof(irq_registers_t);
 /* i don't know why this doesn't work
 	irq_registers_t *regs = (irq_registers_t*)current_task->stack;
@@ -90,9 +90,9 @@ static void create_task(unsigned int fn)
 	regs->esp = (unsigned int)&(regs->eip);
 */
 	*((unsigned int*)(curr->stack + 12*4)) = 0x202; //ints enabled
-	*((unsigned int*)(curr->stack + 11*4)) = 0x08;
-	*((unsigned int*)(curr->stack + 10*4)) = fn;
-	*((unsigned int*)(curr->stack + 0 *4)) = curr->stack+4;
+	*((unsigned int*)(curr->stack + 11*4)) = 0x08;	//cs
+	*((unsigned int*)(curr->stack + 10*4)) = fn;	//eip
+	*((unsigned int*)(curr->stack + 0 *4)) = curr->stack+4;	//esp
 
 	curr->ready = true;
 //	gap(); //for debug
@@ -101,9 +101,9 @@ static void create_task(unsigned int fn)
 
 void init_tasking()
 {
-	create_task((unsigned int)task1);
-	create_task((unsigned int)task2);
-	create_task((unsigned int)task3);
-	create_task((unsigned int)task4);
-	init_timer(10);
+	create_task((unsigned int)task1, (unsigned int)task_end);
+	create_task((unsigned int)task2, (unsigned int)task_end);
+	create_task((unsigned int)task3, (unsigned int)task_end);
+	create_task((unsigned int)task4, (unsigned int)task_end);
+	init_timer(50);
 }
