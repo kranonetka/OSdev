@@ -86,7 +86,7 @@ static void PIT_handler(irq_registers_t* context_ptr)
 				task_t *task_to_switch = current_task->next;
 				while (!(task_to_switch->ready))
 				{
-					if (task_to_switch == current_task)
+					if (task_to_switch == current_task && !current_task->ready)
 					{
 						print("All tasks done\n");
 						task_queue = 0;
