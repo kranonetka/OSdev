@@ -5,7 +5,7 @@
 #include "time.h"
 #include "interrupt.h"
 
-#define PRINT_COUNT 0xffff
+#define PRINT_COUNT 0xff
 
 unsigned int last_task_id = 0;
 task_t* task_queue = 0;
@@ -58,7 +58,7 @@ static void task_end()
 
 static void create_task(const unsigned int fn, const unsigned int task_end_handler)
 {
-	save_state();
+	lock();
 	task_t *curr;
 	if (!task_queue)
 	{
@@ -96,7 +96,7 @@ static void create_task(const unsigned int fn, const unsigned int task_end_handl
 
 	curr->ready = true;
 //	gap(); //for debug
-	restore_state();
+	unlock();
 }
 
 void init_tasking()
@@ -105,5 +105,5 @@ void init_tasking()
 	create_task((unsigned int)task2, (unsigned int)task_end);
 	create_task((unsigned int)task3, (unsigned int)task_end);
 	create_task((unsigned int)task4, (unsigned int)task_end);
-	init_timer(50);
+	init_timer(1);
 }

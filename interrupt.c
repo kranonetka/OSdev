@@ -4,10 +4,11 @@
 #include "common.h"
 #include "task.h"
 
+
 #define IRQ_COUNT 16
 
-#define int_with_errcode (regs.int_no == 8) || ((10 <= regs.int_no) && (regs.int_no <= 14)) || (regs.int_no == 17)
 
+#define int_with_errcode (regs.int_no == 8) || ((10 <= regs.int_no) && (regs.int_no <= 14)) || (regs.int_no == 17)
 
 
 void isr_handler(int_registers_t regs)
@@ -61,45 +62,43 @@ void isr_handler(int_registers_t regs)
 	while (true);
 }
 
-static unsigned int tick_counter = 0;
-
 extern task_t* task_queue;
 extern task_t* current_task;
+static void switch_task(irq_registers_t* context_ptr)
+{
+	if (current_task == 0)
+	{
+		context_ptr->esp = task_queue->stack+4;
+		current_task = task_queue;
+	}
+	else
+	{
+		task_t *task_to_switch = current_task->next;
+		while (!task_to_switch->ready)
+		{
+			if (task_to_switch == current_task)
+			{
+				print("All tasks done\n");
+				task_queue = 0;
+				return;
+			}
+			task_to_switch = task_to_switch->next;
+		}
+		current_task->stack = (unsigned int)&context_ptr->esp;
+		context_ptr->esp = task_to_switch->stack+4;
+		current_task = task_to_switch;
+	}
+}
+
 static void PIT_handler(irq_registers_t* context_ptr)
 {
-	//print("Tick!\n");
+	static unsigned int tick_counter = 0;
 	++tick_counter;
 	if (task_queue)
 	{
 		if (tick_counter == 1)
 		{
-			//print("Start switching\n");
-			if (current_task == 0)
-			{
-				context_ptr->esp = task_queue->stack+4;
-				current_task = task_queue;
-				//switch_task(task_queue, context_ptr);
-			}
-			else
-			{
-				//print("tasking\n");
-				task_t *task_to_switch = current_task->next;
-				while (!(task_to_switch->ready))
-				{
-					if (task_to_switch == current_task && !current_task->ready)
-					{
-						print("All tasks done\n");
-						task_queue = 0;
-						return;
-					}
-					task_to_switch = task_to_switch->next;
-				}
-				current_task->stack = (unsigned int)&context_ptr->esp;
-				context_ptr->esp = task_to_switch->stack+4;
-				current_task = task_to_switch;
-				//switch_task(task_to_switch, context_ptr);
-			}
-			//print("Switching done\n");
+			switch_task(context_ptr);
 			tick_counter = 0;
 		}
 	}

@@ -2,8 +2,13 @@
 
 typedef enum { true=1, false=0} bool;
 
-#define save_state() asm volatile("pushf\n\tcli\n\t")
-#define restore_state() asm volatile("popf\n\t")
+#define lock()			\
+	unsigned int __iflag__;	\
+	asm volatile("pushf\n\tpop %0\n\tcli\n\t" : "=r"(__iflag__))
+
+#define unlock()	\
+	asm volatile("push %0\n\tpopf\n\t" : : "r"(__iflag__))
+
 #define gap() asm volatile("nop\n\tnop\n\tnop\n\tnop\n\tnop\n\tnop\n\tnop\n\tnop\n\t")
 
 void outb(const unsigned short int port, const unsigned char value);

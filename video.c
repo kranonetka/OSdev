@@ -15,7 +15,6 @@ static void update_cursor()
 
 static void scroll()
 {
-
 	unsigned short tmp_ptr = 0;
 	while (tmp_ptr < 80*24)
 	{
@@ -44,7 +43,8 @@ void clear_screen(const char color)
 
 void print(const char* string)
 {
-	save_state();
+	gap();
+	lock();
 	char* current_char = (char *)string;
 	while (*current_char)
 	{
@@ -81,5 +81,49 @@ void print(const char* string)
 		update_cursor();
 		++current_char;
 	}
-	restore_state();
+	gap();
+	unlock();
+}
+
+void color_print(const char* string, const unsigned char color)
+{
+	lock();
+	char* current_char = (char *)string;
+	while (*current_char)
+	{
+		switch (*current_char)
+		{
+			case '\n':
+				pointer = pointer - (pointer % 80) + 80;
+				break;
+			case '\t':
+				pointer = (pointer + 8) & ~(8-1);
+				break;
+			case '\r':
+				if (pointer > 0)
+				{
+					--pointer;
+				}
+				break;
+			case '\b':
+				if (pointer > 0)
+				{
+					--pointer;
+					VIDEO_MEM[pointer << 1] = ' ';
+				}
+				break;
+			default:
+				VIDEO_MEM[pointer << 1] = (*current_char);
+				VIDEO_MEM[(pointer << 1) + 1] = color;
+				++pointer;
+		}
+
+		if (pointer == 80*25)
+		{
+			scroll();
+		}
+		update_cursor();
+		++current_char;
+	}
+	unlock();
 }
